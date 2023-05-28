@@ -2,7 +2,7 @@
   "profiles": {
     "Excel2TextDiff": {
       "commandName": "Project",
-      "commandLineArgs": "-t D:\\workspace\\luban\\config\\Datas\\test\\full_type.xlsx d:\\full_type.transform.txt"
+      "commandLineArgs": "-d -p \"C:\\Program Files\\Beyond Compare 4\\BComp.exe\" -f \"{0} {1} /title1=\\\"{2}\\\" /title2=\\\"{3}\\\" /leftreadonly\" \"ShopTemplate.xlsm Revision 35559\" \"ShopTemplate.xlsm Revision 35560\" C:\\Users\\Administrator\\AppData\\Local\\Temp\\ShopTemplate.xlsm-rev35559.svn118.tmp.xlsm C:\\Users\\Administrator\\AppData\\Local\\Temp\\ShopTemplate.xlsm-rev35560.svn118.tmp.xlsm"
     },
     "diff": {
       "commandName": "Project",

@@ -37,6 +37,12 @@ namespace Excel2TextDiff
     {
         static void Main(string[] args)
         {
+            for (int i = 0; i < args.Length; i++)
+            {
+                args[i] = args[i].Replace('\n', ' ');
+                Console.WriteLine(args[i]);
+            }
+
             var options = ParseOptions(args);
 
             System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
@@ -54,7 +60,7 @@ namespace Excel2TextDiff
             }
             else
             {
-                if (options.Files.Count != 2)
+                if (options.Files.Count != 2 && options.Files.Count != 4)
                 {
                     Console.WriteLine("Usage: Excel2TextDiff -d <excel file 1> <excel file 2> ");
                     Environment.Exit(1);
@@ -62,16 +68,29 @@ namespace Excel2TextDiff
 
                 var diffProgame = options.DiffProgram ?? "TortoiseMerge.exe";
 
-                var tempTxt1 = Path.GetTempFileName();
-                writer.TransformToTextAndSave(options.Files[0], tempTxt1);
-
-                var tempTxt2 = Path.GetTempFileName();
-                writer.TransformToTextAndSave(options.Files[1], tempTxt2);
-
+               
+                
                 ProcessStartInfo startInfo = new ProcessStartInfo();
                 startInfo.FileName = diffProgame;
                 string argsFormation = options.DiffProgramArgumentFormat ?? "/base:{0} /mine:{1}";
-                startInfo.Arguments = string.Format(argsFormation, tempTxt1, tempTxt2);
+                if (options.Files.Count == 2)
+                {
+                    var tempTxt1 = Path.GetTempFileName();
+                    writer.TransformToTextAndSave(options.Files[0], tempTxt1);
+
+                    var tempTxt2 = Path.GetTempFileName();
+                    writer.TransformToTextAndSave(options.Files[1], tempTxt2);
+                    startInfo.Arguments = string.Format(argsFormation, tempTxt1, tempTxt2);
+                }else if (options.Files.Count == 4)
+                {
+                    var tempTxt1 = Path.GetTempFileName();
+                    writer.TransformToTextAndSave(options.Files[2], tempTxt1);
+
+                    var tempTxt2 = Path.GetTempFileName();
+                    writer.TransformToTextAndSave(options.Files[3], tempTxt2);
+                    startInfo.Arguments = string.Format(argsFormation, tempTxt1, tempTxt2, options.Files[0], options.Files[1]);
+                    Console.WriteLine("======" + startInfo.Arguments);
+                }
                 Process.Start(startInfo);
             }
         }
@@ -87,8 +106,7 @@ namespace Excel2TextDiff
             var result = parser.ParseArguments<CommandLineOptions>(args);
             if (result.Tag == ParserResultType.NotParsed)
             {
-                Console.Error.WriteLine(helpWriter.ToString());
-                Environment.Exit(1);
+                //Console.Error.WriteLine(helpWriter.ToString());
             }
             return ((Parsed<CommandLineOptions>)result).Value;
         }
